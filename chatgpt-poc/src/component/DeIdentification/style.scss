@@ -1,0 +1,29 @@
+.de-wrapper{
+margin:0 auto 20px;
+max-width: 600px;
+.form-group{
+    display: flex;
+    margin-bottom: 20px;
+    max-width: 550px;
+    align-items: baseline;
+    label{
+        width: 100px;
+    }
+    textarea{
+        width: 450px;
+        height: 200px;
+        padding: 10px;  
+    }
+   select{
+       width: 450px;
+       height: 40px;
+   }
+}
+}
+.form-submit{
+    display: flex;
+    justify-content: flex-end;
+    button[type="submit"]{
+       margin-right: 50px;
+    }
+}
