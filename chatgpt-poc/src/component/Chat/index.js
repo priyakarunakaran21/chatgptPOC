@@ -142,7 +142,7 @@ const Chat = () => {
               placeholder="Send message..." 
               value={prompt} onChange={handleChange} 
               onKeyDown={handleKeyPress}  />
-              <button  className="message-send-button " onClick={handleEnter}><img src={sendIcon} alt=""/></button>
+              <button type="submit" onClick={handleEnter}>Send</button>
             </div>
             </div>
           </div>
