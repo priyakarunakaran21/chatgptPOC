@@ -1,17 +1,25 @@
-import { useState, useRef} from 'react';
+import { useState, useRef, useEffect} from 'react';
 import Modal from '../Modal/index'
 import './style.scss'
-import sendIcon from "../../assets/send-icon.png";
-const Chat = () => {
-    const apiKey = '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';
+const Chat = ({messages}) => {
+    const apiKey = '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';
     const myRef = useRef(null);
-    let conversationHistory = '';
     let convoSession = '';
+    let conversationHistory = '';
+
+    const conversationHistoryRef = useRef('');
+    const promptRef = useRef('');
+  
+    // const [conversationHistory, setConversationHistory] = useState('');
     const [prompt, setPrompt] = useState('');
     const [chatbotResponse, setChatbotResponse] = useState('');
     const [intro, setIntro] = useState(true);
     const [showModal, setShowModal] = useState(false); 
     
+    // useEffect(() => {
+    //     console.log('Conversation history updated:', conversationHistory);
+    //   }, [conversationHistory, prompt]);
+
     const scrollToBottom = () => {
         setTimeout(function () {
             myRef.current.scrollIntoView(false);
@@ -29,7 +37,7 @@ const Chat = () => {
     };
     
     function handleChange(event) {
-      setPrompt(event.target.value);
+      setPrompt(promptRef.current.value);
     }
     
     function handleKeyPress(event) {
@@ -39,43 +47,47 @@ const Chat = () => {
     }
   
   
-    const handleEnter = async() =>{
-    setIntro(false);
-    conversationHistory += `You: ${prompt}\n`;
-    convoSession = `<span class="user">U</span><label class="user-message-bubble">${prompt}\n</label>`;
-    setChatbotResponse(prevText => prevText.concat(convoSession));
-    try {
-        const response = await fetch('https://api.openai.com/v1/engines/text-davinci-002/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-          prompt: conversationHistory,
-          max_tokens: 500,
-          n: 1,
-        }),
-      });
-      const data = await response.json();
-      if (response.ok) {
-        const chatbotMessage = data.choices[0].text.trim();
-        console.log(chatbotMessage);
-        conversationHistory += `ChatBot: ${chatbotMessage}\n\n`;
-        convoSession =  `<span class="bot">Bot</span><label class="message-bubble"> ${chatbotMessage}\n\n</label>`;
-        setChatbotResponse(prevText => prevText.concat(convoSession));
+    const handleEnter = async () => {
+        setIntro(false);
+        const newHistory = `${conversationHistoryRef.current} You: ${prompt}\n`;
+        conversationHistoryRef.current = newHistory;
+        const convoSession = `<span class="user">U</span><label class="user-message-bubble">${prompt}\n</label>`;
+        setChatbotResponse((prevText) => prevText.concat(convoSession));
       
-        
-      } else {
-        throw new Error(data.error.message);
-      }
-    } catch (error) {
-      setChatbotResponse(`Error: ${error.message}`);
-    }
+        try {
+          const response = await fetch('https://api.openai.com/v1/engines/text-davinci-002/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify({
+              prompt: conversationHistoryRef.current,
+              max_tokens: 500,
+              n: 1,
+            }),
+          });
+      
+          const data = await response.json();
+          if (response.ok) {
+            const chatbotMessage = data.choices[0].text.trim();
+            const newbotHistory = `${conversationHistoryRef.current}  ${chatbotMessage}\n\n`;
+            conversationHistoryRef.current = newbotHistory;
+            const newbotSession = `<span class="bot">Bot</span><label class="message-bubble"> ${chatbotMessage}\n\n</label>`;
+            setChatbotResponse((prevText) => prevText.concat(newbotSession));
+          } else {
+            throw new Error(data.error.message);
+          }
+        } catch (error) {
+          setChatbotResponse(`Error: ${error.message}`);
+        }
     scrollToBottom()
     setPrompt("")
-    }
-  
+    };
+
+  const showSession = () =>{
+      setIntro(false);
+  }
   
     return (
       <div className="App">
@@ -83,32 +95,14 @@ const Chat = () => {
         <div className="chat-wrapper">
         <div className="conversation-history-card">
         <h2>Conversation History</h2>
-        {!intro && 
-        <button className="history-item">
-        <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" 
-        stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+        
+        <button className="history-item" onClick={showSession}>
+        <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" 
+        strokeLinejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
         </svg>
             Chat 1
-            </button>}
-         {/* <div className="conversation-history-list">
-          <p>You: Hi</p>
-          <p>Chatbot: Hello! How can I assist you today?</p>
-          <p>You: Can you help me find a good restaurant in the area?</p>
-          <p>Chatbot: Sure thing! What type of cuisine are you in the mood for?</p>
-          <p>You: Italian sounds good.</p>
-          <p>Chatbot: Great! I recommend trying out Pasta Bella. It's one of the highest rated Italian restaurants in the area.</p>
-          <p>You: Thanks for the recommendation.</p>
-          <p>Chatbot: You're welcome! Enjoy your meal.</p>
-        <p>You: Hi</p>
-          <p>Chatbot: Hello! How can I assist you today?</p>
-          <p>You: Can you help me find a good restaurant in the area?</p>
-          <p>Chatbot: Sure thing! What type of cuisine are you in the mood for?</p>
-          <p>You: Italian sounds good.</p>
-          <p>Chatbot: Great! I recommend trying out Pasta Bella. It's one of the highest rated Italian restaurants in the area.</p>
-          <p>You: Thanks for the recommendation.</p>
-          <p>Chatbot: You're welcome! Enjoy your meal.</p>
-         </div> */}
+            </button>
        
        </div>
   
@@ -141,7 +135,8 @@ const Chat = () => {
             <input type="text" id="user-input" className="message-input-field" 
               placeholder="Send message..." 
               value={prompt} onChange={handleChange} 
-              onKeyDown={handleKeyPress}  />
+              onKeyDown={handleKeyPress}  
+              ref={promptRef} />
               <button type="submit" onClick={handleEnter}>Send</button>
             </div>
             </div>

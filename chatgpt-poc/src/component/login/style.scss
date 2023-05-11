@@ -1,0 +1,33 @@
+.login-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Adjust the height as needed */
+    .centeredDiv {
+        width:350px;
+        margin-bottom: 100px;
+      border: 2px solid #cccccc;
+      border-radius: 5px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.3);
+      padding: 30px;
+      h1{
+          margin-top:0;
+      }
+    span.error{
+        font-size: 14px;
+          margin: 0 0 20px 0;
+          color: red;
+      }
+      .input-container{
+          display: flex;
+          flex-direction: row;
+          input{
+              box-shadow: none;
+          }
+      }
+    }
+  }
+  
+  
+  
+  
