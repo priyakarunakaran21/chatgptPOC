@@ -2,7 +2,7 @@ import { useState, useRef, useEffect} from 'react';
 import Modal from '../Modal/index'
 import './style.scss'
 const Chat = ({messages}) => {
-    const apiKey = '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';
+    const apiKey = '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';
     const myRef = useRef(null);
     let convoSession = '';
     let conversationHistory = '';
@@ -55,7 +55,7 @@ const Chat = ({messages}) => {
         setChatbotResponse((prevText) => prevText.concat(convoSession));
       
         try {
-          const response = await fetch('https://api.openai.com/v1/engines/text-davinci-002/completions', {
+          const response = await fetch('https://api.openai.com/v1/engines/text-davinci-003/completions', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
