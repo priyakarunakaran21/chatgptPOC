@@ -2,7 +2,7 @@ import { useState, useRef, useEffect} from 'react';
 import Modal from '../Modal/index'
 import './style.scss'
 const Chat = ({messages}) => {
-    const apiKey = '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';
+    const apiKey = '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';
     const myRef = useRef(null);
     let convoSession = '';
     let conversationHistory = '';
