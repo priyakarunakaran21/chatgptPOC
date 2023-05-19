@@ -8,7 +8,7 @@ const Chat = ({messages}) => {
   const toggleSidebar = () => {
     setIsSidebarCollapsed(!isSidebarCollapsed);
   };
-    const apiKey = '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';
+    const apiKey = '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';
     const myRef = useRef(null);
     let convoSession = '';
     let conversationHistory = '';
@@ -35,36 +35,46 @@ const Chat = ({messages}) => {
     
       const regenerateResponses = async () => {
         try {
-          const response = await fetch('https://api.openai.com/v1/engines/text-davinci-003/completions', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`,
-          },
-          body: JSON.stringify({
-            prompt: newbotHistory1Ref.current,
-            max_tokens: 500,
-            n: 1,
-          }),
-        });
+        //   const response = await fetch('https://api.openai.com/v1/engines/text-davinci-003/completions', {
+        //   method: 'POST',
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //     'Authorization': `Bearer ${apiKey}`,
+        //   },
+        //   body: JSON.stringify({
+        //     prompt: newbotHistory1Ref.current,
+        //     max_tokens: 500,
+        //     n: 1,
+        //   }),
+        // });
+          const formData = new FormData();
+                  formData.append('input_text', newbotHistory1Ref.current);
+                  formData.append('task', 'deidentify_summarize_chatgpt');
+        
+                  const response = await fetch('http://13.127.239.11/deid/messages', {    
+                    method: 'POST',
+                    body: formData
+                  });
     
           const data = await response.json();
-          data.choices.forEach((choice) => {
-            const generatedText = choice.text.trim();
-  
-            if (isCode(generatedText)) {
-              // ${chatbotMessage.replace(/\n/g, '<br />').replace(/`([^!]+)`/g, '<pre><code>$1</code></pre>')}
-              htmlCode= `<div class="bot-chat"><span class="bot"></span><div class="message-bubble"><pre><code>${generatedText.replace(/\n/g, '<br />')}</code></pre></div></div>\n\n`;
-            } else {
-              htmlCode = `<div class="bot-chat"><span class="bot"></span><div class="message-bubble">${generatedText.replace(/\n/g, '<br />')}</div></div>\n\n`;
-            }
-          });
+          const generatedText = data.chatgpt.trim();
+
+          if (isCode(generatedText)) {
+            // ${chatbotMessage.replace(/\n/g, '<br />').replace(/`([^!]+)`/g, '<pre><code>$1</code></pre>')}
+            htmlCode= `<div class="bot-chat"><span class="bot"></span><div class="message-bubble"><pre><code>${generatedText.replace(/\n/g, '<br />')}</code></pre></div></div>\n\n`;
+          } else {
+            htmlCode = `<div class="bot-chat"><span class="bot"></span><div class="message-bubble">${generatedText.replace(/\n/g, '<br />')}</div></div>\n\n`;
+          }
+
           if (response.ok) {
-            const chatbotMessage = data.choices[0].text.trim();
+           const deidMessage = data.deidentified.trim();
+           const chatbotMessage = data.chatgpt.trim();
             const newbotHistory = `${conversationHistoryRef.current}  ${chatbotMessage}\n\n`;
             conversationHistoryRef.current = newbotHistory;
-            const newbotSession =  `${htmlCode}\n\n`;
+            const newbotSession = `${htmlCode}\n\n`;
+            //const newbotSession = `${htmlCode}\n\n`;
             setChatbotResponse((prevText) => prevText.concat(newbotSession));
+
           } else {
             throw new Error(data.error.message);
           }
@@ -112,23 +122,45 @@ const Chat = ({messages}) => {
         setChatbotResponse((prevText) => prevText.concat(convoSession));
       
         try {
-          const response = await fetch('https://api.openai.com/v1/engines/text-davinci-003/completions', {
+          // const response = await fetch('https://api.openai.com/v1/engines/text-davinci-003/completions', {
+          //   method: 'POST',
+          //   headers: {
+          //     'Content-Type': 'application/json',
+          //     'Authorization': `Bearer ${apiKey}`,
+          //   },
+          //   body: JSON.stringify({
+          //     prompt: conversationHistoryRef.current,
+          //     max_tokens: 500,
+          //     n: 1,
+          //   }),
+          // });
+
+            const formData = new FormData();
+          formData.append('input_text', conversationHistoryRef.current);
+          formData.append('task', 'deidentify_summarize_chatgpt');
+
+          const response = await fetch('http://13.127.239.11/deid/messages', {    
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${apiKey}`,
-            },
-            body: JSON.stringify({
-              prompt: conversationHistoryRef.current,
-              max_tokens: 500,
-              n: 1,
-            }),
-          });
-      
-          const data = await response.json();
-         
-        data.choices.forEach((choice) => {
-          const generatedText = choice.text.trim();
+            body: formData
+          });
+
+         
+
+         const data = await response.json();
+         debugger
+        // data.choices.forEach((choice) => {
+        //   const generatedText = choice.text.trim();
+
+        //   if (isCode(generatedText)) {
+        //     // ${chatbotMessage.replace(/\n/g, '<br />').replace(/`([^!]+)`/g, '<pre><code>$1</code></pre>')}
+        //     htmlCode= `<div class="bot-chat"><span class="bot"></span><div class="message-bubble"><pre><code>${generatedText.replace(/\n/g, '<br />')}</code></pre></div></div>\n\n`;
+        //   } else {
+        //     htmlCode = `<div class="bot-chat"><span class="bot"></span><div class="message-bubble">${generatedText.replace(/\n/g, '<br />')}</div></div>\n\n`;
+        //   }
+        // });
+        
+       
+          const generatedText = data.chatgpt.trim();
 
           if (isCode(generatedText)) {
             // ${chatbotMessage.replace(/\n/g, '<br />').replace(/`([^!]+)`/g, '<pre><code>$1</code></pre>')}
@@ -136,14 +168,15 @@ const Chat = ({messages}) => {
           } else {
             htmlCode = `<div class="bot-chat"><span class="bot"></span><div class="message-bubble">${generatedText.replace(/\n/g, '<br />')}</div></div>\n\n`;
           }
-        });
-
-
+        
           if (response.ok) {
-            const chatbotMessage = data.choices[0].text.trim();
+          // const chatbotMessage = data.choices[0].text.trim();
+           const deidMessage = data.deidentified.trim();
+           const chatbotMessage = data.chatgpt.trim();
             const newbotHistory = `${conversationHistoryRef.current}  ${chatbotMessage}\n\n`;
             conversationHistoryRef.current = newbotHistory;
-            const newbotSession = `${htmlCode}\n\n`;
+            const newbotSession = `<div class="de-bot-chat"><span class="de-bot"></span><div class="de-message-bubble">${deidMessage.replace(/\n/g, '<br />')}</div></div>\n\n ${htmlCode}\n\n`;
+            //const newbotSession = `${htmlCode}\n\n`;
             setChatbotResponse((prevText) => prevText.concat(newbotSession));
           } else {
             throw new Error(data.error.message);
