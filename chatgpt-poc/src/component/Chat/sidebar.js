@@ -2,16 +2,17 @@ import React, { useState } from 'react';
 import Modal from '../Modal/index';
 import user_icon from '../../assets/member.png'
 import logout from '../../assets/logout.png'
-import settings from '../../assets/settings.png'
+import settingsIcon from '../../assets/settings.png'
 import chat from '../../assets/chat.png'
 import rightarrow from '../../assets/right.png'
 import downarrow from '../../assets/down.png'
 import newchat from '../../assets/newchat.png'
 import logo from '../../assets/logo.png'
-const Sidebar = ({ isShow, startNewSession, savedHistory1, chatSessions, endsession }) => {
+const Sidebar = ({ isShow, startNewSession, savedHistory1, chatSessions, endsession, settings, onDataUpdate }) => {
   const [selectedButtonIndex, setSelectedButtonIndex] = useState(0);
     const [isopenChat , setOpenChat] = useState(true);
     const [showModal, setShowModal] = useState(false);
+    const [showConfiguration, setshowConfiguration] = useState(false);
     const loggeduser = sessionStorage.getItem("loggeduser");
   const handleNewChat = () => {
     setSelectedButtonIndex(chatSessions.length); 
@@ -32,6 +33,9 @@ const Sidebar = ({ isShow, startNewSession, savedHistory1, chatSessions, endsess
   const openConvo = ()=>{
     setOpenChat(!isopenChat);
   }
+  const handleConfigurationToggle = () =>{
+    setshowConfiguration(!showConfiguration);
+  }
   const handleLogout = () =>{
     const storedData = JSON.parse(localStorage.getItem('myObject'));
     
@@ -41,6 +45,11 @@ const Sidebar = ({ isShow, startNewSession, savedHistory1, chatSessions, endsess
     localStorage.setItem('myObject', JSON.stringify(storedData));
     sessionStorage.removeItem("loggeduser");
     endsession(false);
+  }
+
+  const handleDataChange = (event) =>{
+    const { name, value } = event.target;
+    onDataUpdate(name, value);
   }
 
   return (
@@ -53,7 +62,7 @@ const Sidebar = ({ isShow, startNewSession, savedHistory1, chatSessions, endsess
           </div>
           <div className="menu">
               <label className="menu-label">Menu</label>
-    <a className="menu-items" onClick={openConvo}><img src={chat} alt=""/><span>Conversations</span> {isopenChat ? <img className="arrow" src={downarrow} alt=""/>: <img className="arrow" src={rightarrow} alt=""/>}</a>
+            <button className="menu-items" onClick={openConvo}><img src={chat} alt=""/><span>Conversations</span> {isopenChat ? <img className="arrow" src={downarrow} alt=""/>: <img className="arrow" src={rightarrow} alt=""/>}</button>
               {isopenChat && 
               <div className="chats">
           <button className="new-chat" onClick={handleNewChat}><img src={newchat} alt=""/>Open New Chat</button>
@@ -81,10 +90,17 @@ const Sidebar = ({ isShow, startNewSession, savedHistory1, chatSessions, endsess
         ))}
         </div>
         }
-        <a className="menu-items"><img src={settings} alt=""/>Settings</a>
-              <a className="menu-items" onClick={handleLogout}><img src={logout} alt=""/>Logout</a>
-        </div>
+        <button className="menu-items" onClick={handleConfigurationToggle}><img src={settingsIcon} alt=""/><span>Settings</span> {showConfiguration ? <img className="arrow" src={downarrow} alt=""/>: <img className="arrow" src={rightarrow} alt=""/>}</button>
+        {showConfiguration && (
 
+        <div className="configuration">
+            <p><input className="full" name="cgptModel" type="text" placeholder="OpenAi Model name"  onChange={handleDataChange} /></p>
+            <p><input name="maxToken" type="number" placeholder="Max Token" min="1"  onChange={handleDataChange} />
+            <input name="numResponses" type="number" placeholder="No.of.Response" title="No.of.Response"  onChange={handleDataChange} /></p>
+            <p><input name="temperature" type="number" placeholder="temperature" onChange={handleDataChange} />
+            <input name="regenTemperature" placeholder="Reg Temperature" type="number"  onChange={handleDataChange} /></p>
+        </div>)}
+      <button className="menu-items" onClick={handleLogout}><img src={logout} alt=""/>Logout</button></div>
         {showModal && (
             <Modal onClose={handleModalClose}>
               {/* modal content goes here */}

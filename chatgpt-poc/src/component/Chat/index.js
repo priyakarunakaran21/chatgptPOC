@@ -2,23 +2,20 @@ import { useState, useRef, useEffect } from 'react';
 import './style.scss';
 import Sidebar from './sidebar';
 
-const sampleData = {
-      "chatgptApiTime": "2.128786087036133 seconds",
-      "deidentified": "[NAME] [NAME] born on[DOB]has a member ID of w[MEMBERID], SSN [SSN], and email [EMAIL_ADDRESS]. Phone number is [PHONENUMBER]",
-      "modeltime": "1.187134027481079 seconds",
-      "question": "Michael Davis born on 01/01/1950 has a member ID of w123423112, SSN 711-38-0829, and email michaeldavis@hotmail.com. Phone number is +12205344654",
-      "summary_chatgpt": "\n\nJohn Smith born on May 15, 1982 has a member ID of w123456, SSN 123-45-6789, and email johnsmith@example.com. Phone number is (222) 222-2222."
-}
+// const sampleData = {
+//       "chatgptApiTime": "2.128786087036133 seconds",
+//       "deidentified": "[NAME] [NAME] born on[DOB]has a member ID of w[MEMBERID], SSN [SSN], and email [EMAIL_ADDRESS]. Phone number is [PHONENUMBER]",
+//       "modeltime": "1.187134027481079 seconds",
+//       "question": "Michael Davis born on 01/01/1950 has a member ID of w123423112, SSN 711-38-0829, and email michaeldavis@hotmail.com. Phone number is +12205344654",
+//       "summary_chatgpt": "\n\nJohn Smith born on May 15, 1982 has a member ID of w123456, SSN 123-45-6789, and email johnsmith@example.com. Phone number is (222) 222-2222."
+// }
 
 const Chat = ({endsession}) => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [chatSessions, setChatSessions] = useState([]);
   const myRef = useRef(null);
-  let convoSession = '';
-  let newbotHistory1 = '';
   const newbotHistory1Ref = useRef('');
   const [sessionInit, setsessionInit] = useState(0);
-  const [regenerate, setRegenerate] = useState(false);
   let htmlCode;
   const conversationHistoryRef = useRef('');
   const promptRef = useRef('');
@@ -26,6 +23,21 @@ const Chat = ({endsession}) => {
   const [chatbotResponse, setChatbotResponse] = useState('');
   const [ChatbotSessionHistory, setChatbotSessionHistory] = useState('');
   const [intro, setIntro] = useState(true);
+
+  const [settings, setSettings] = useState({
+    cgptModel: '',
+    maxToken: '',
+    numResponses: '',
+    temperature: '',
+    regenTemperature: ''
+  });
+ 
+  const handleSettingsChange = (name,value) => {
+    setSettings({
+      ...settings,
+      [name]: value
+    });
+  };
   
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem('myObject'));
@@ -72,6 +84,11 @@ const Chat = ({endsession}) => {
       const formData = new FormData();
                   formData.append('input_text', newbotHistory1Ref.current);
                   formData.append('task', 'deidentify_summarize_chatgpt');
+        //can access the variable like this
+//                formData.append('maxToken', settings.maxToken);
+
+
+
 
       // const response = await fetch('https://api.openai.com/v1/engines/text-davinci-003/completions', {
       //   method: 'POST',
@@ -104,7 +121,7 @@ const Chat = ({endsession}) => {
 
           if (response.ok) {
             const deidMessage = data.deidentified.trim();
-           const chatbotMessage = data.summary_chatgpt.trim();
+           //const chatbotMessage = data.summary_chatgpt.trim();
             // const newbotHistory = `${chatbotMessage}\n\n`;
             // conversationHistoryRef.current = newbotHistory;
            // const newbotSession =  `${htmlCode}\n\n`;
@@ -150,7 +167,7 @@ const Chat = ({endsession}) => {
         newbotHistory1Ref.current = newHistory;
     
         const convoSession = `<div class="person-chat"><span class="user"></span><label class="user-message-bubble">${prompt}\n</label></div>`;
-        const newChatSession = `${chatbotResponse}${convoSession}`;
+        //const newChatSession = `${chatbotResponse}${convoSession}`;
         setChatbotResponse((prevText) => prevText.concat(convoSession));
     
         try {
@@ -207,7 +224,6 @@ const Chat = ({endsession}) => {
         }
         
         setsessionInit(sessionInit+1)
-        setRegenerate(false);
         scrollToBottom();
         setPrompt("");
       };
@@ -221,7 +237,7 @@ const Chat = ({endsession}) => {
               {/* <button className="toggle-button" onClick={toggleSidebar}>
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" id="Layer_1" version="1.1" viewBox="0 0 32 32" width="24px"><path d="M4,10h24c1.104,0,2-0.896,2-2s-0.896-2-2-2H4C2.896,6,2,6.896,2,8S2.896,10,4,10z M28,14H4c-1.104,0-2,0.896-2,2  s0.896,2,2,2h24c1.104,0,2-0.896,2-2S29.104,14,28,14z M28,22H4c-1.104,0-2,0.896-2,2s0.896,2,2,2h24c1.104,0,2-0.896,2-2  S29.104,22,28,22z"/></svg>
               </button> */}
-              <Sidebar isShow={!isSidebarCollapsed} startNewSession={startNewSession} savedHistory1={savedHistory1} chatSessions={chatSessions} endsession={endsession}/>
+              <Sidebar isShow={!isSidebarCollapsed} startNewSession={startNewSession} savedHistory1={savedHistory1} chatSessions={chatSessions} endsession={endsession} onDataUpdate={handleSettingsChange}/>
             </div>
             <div className={`chat-container ${!isSidebarCollapsed ? 'shrink' : ''}`} ref={myRef}>
               {intro && chatSessions.length < 1 ? (
