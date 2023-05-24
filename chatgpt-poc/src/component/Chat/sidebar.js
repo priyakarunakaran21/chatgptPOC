@@ -8,12 +8,13 @@ import rightarrow from '../../assets/right.png'
 import downarrow from '../../assets/down.png'
 import newchat from '../../assets/newchat.png'
 import logo from '../../assets/logo.png'
-const Sidebar = ({ isShow, startNewSession, savedHistory1, chatSessions }) => {
-  const [selectedButtonIndex, setSelectedButtonIndex] = useState(null);
-    const [isopenChat , setOpenChat] = useState(false)
+const Sidebar = ({ isShow, startNewSession, savedHistory1, chatSessions, endsession }) => {
+  const [selectedButtonIndex, setSelectedButtonIndex] = useState(0);
+    const [isopenChat , setOpenChat] = useState(true);
     const [showModal, setShowModal] = useState(false);
+    const loggeduser = sessionStorage.getItem("loggeduser");
   const handleNewChat = () => {
-    setSelectedButtonIndex(null); 
+    setSelectedButtonIndex(chatSessions.length); 
     startNewSession();
   };
   const handleModalClose = () => {
@@ -31,6 +32,16 @@ const Sidebar = ({ isShow, startNewSession, savedHistory1, chatSessions }) => {
   const openConvo = ()=>{
     setOpenChat(!isopenChat);
   }
+  const handleLogout = () =>{
+    const storedData = JSON.parse(localStorage.getItem('myObject'));
+    
+    const person = storedData.find((u) => u.name === loggeduser);
+    person.messages = chatSessions;
+    
+    localStorage.setItem('myObject', JSON.stringify(storedData));
+    sessionStorage.removeItem("loggeduser");
+    endsession(false);
+  }
 
   return (
     isShow ? (
@@ -38,7 +49,7 @@ const Sidebar = ({ isShow, startNewSession, savedHistory1, chatSessions }) => {
           <h1><img src={logo} alt=""/></h1>
          <span className="info-circle" onClick={handleInfoIconClick}>i</span>
           <div className="user-info">
-              <img src={user_icon} alt=""/> <span>chatuser@cvs.com</span>
+              <img src={user_icon} alt=""/> <span>{loggeduser}</span>
           </div>
           <div className="menu">
               <label className="menu-label">Menu</label>
@@ -46,7 +57,7 @@ const Sidebar = ({ isShow, startNewSession, savedHistory1, chatSessions }) => {
               {isopenChat && 
               <div className="chats">
           <button className="new-chat" onClick={handleNewChat}><img src={newchat} alt=""/>Open New Chat</button>
-            {chatSessions.map((session, index) => (
+            {chatSessions && chatSessions.map((session, index) => (
           <button
             className={`history-item ${selectedButtonIndex === index ? 'selected' : ''}`}
             key={index}
@@ -71,7 +82,7 @@ const Sidebar = ({ isShow, startNewSession, savedHistory1, chatSessions }) => {
         </div>
         }
         <a className="menu-items"><img src={settings} alt=""/>Settings</a>
-              <a className="menu-items"><img src={logout} alt=""/>Logout</a>
+              <a className="menu-items" onClick={handleLogout}><img src={logout} alt=""/>Logout</a>
         </div>
 
         {showModal && (

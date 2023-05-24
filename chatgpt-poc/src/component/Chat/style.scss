@@ -56,6 +56,8 @@ color: #cbcbcb;
      background: black;
      padding:10px 20px;
      font-family: 'Inter', sans-serif;
+     max-height: 250px;
+     overflow-y: auto;
    }
    .menu-label{
      text-transform:uppercase;
@@ -79,6 +81,7 @@ color: #cbcbcb;
     color: #f2f2f2;
     display: flex;
     align-items: center;
+    cursor:pointer;
     span{
       flex-grow: 1;
     }
@@ -382,7 +385,9 @@ button[type="submit"]:hover {
         }
     }
     .history-item.selected {
-      background-color:rgba(0,0,0,0.6);
+      background-color:#29c03b;
+      color: #000000;
+      font-weight: bold;
     }
     
 .conversation-history-card {
