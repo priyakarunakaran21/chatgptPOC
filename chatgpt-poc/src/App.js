@@ -1,8 +1,6 @@
 import {useState} from 'react'
 import Login from './component/login'
 import Chat from './component/Chat/index.js'
-import DeIdentify from './component/DeIdentification/index.js'
-import Example from './component/sample/index'
 
 function App() {
   const myObject = [
@@ -10,7 +8,6 @@ function App() {
     {name: 'John@cvs.com'},
     {name: 'Bill@cvs.com'}
   ];
-  const [messages, setMessages] = useState('');
 const [user, setUser] = useState('')
 const [isExist, setIsExist] = useState(false);
 const [error, setError] = useState('');
