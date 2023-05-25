@@ -260,7 +260,7 @@ const Chat = ({endsession}) => {
                     value={prompt} onChange={handleChange}
                     onKeyDown={handleKeyPress}
                     ref={promptRef} />
-                  <button type="submit" onClick={handleEnter}>Send</button>
+                  <button type="submit" onClick={handleEnter} disabled={prompt ? false: true}>Send</button>
                 </div>
               </div>
             </div>

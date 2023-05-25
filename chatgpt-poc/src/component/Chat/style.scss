@@ -188,7 +188,7 @@ display: flex;
   font-family: 'Inter', sans-serif;
   margin-right: 20px;
   color: #f2f2f2;
-  background:url('../../assets/robot.png')no-repeat center center #e0e0e0;
+  background:url('../../assets/chatgpt.png')no-repeat center center #c4bdbd;
 }
 .de-bot{
   display: flex;
@@ -223,7 +223,7 @@ padding-bottom: 60px;
   font-size: 14px;
   line-height: 20px;
   font-weight:300;
-  background-color: #f2f2f2;
+  background-color: #d4f6e9;
   padding: 8px 12px;
   border-radius: 5px;
   position:relative;
@@ -234,7 +234,7 @@ padding-bottom: 60px;
     height: 0;
     border-bottom: 8px solid transparent;
     border-top: 8px solid transparent;
-    border-right: 22px solid #f1f1f1;
+    border-right: 22px solid #d4f6e9;
     left: -10px;
     top: 0;
   }
@@ -280,12 +280,12 @@ padding-bottom: 60px;
 }
 .user-message-bubble {
 align-self: flex-end;
-background-color: #5b65d4;
-color: #ffffff;
+background-color: #f2f2f2;
+color: #000000;
 max-width: 80%;
 padding: 8px 12px;
 border-radius: 5px;
-font-weight: 600;
+font-weight: 400;
 font-size: 14px;
 position: relative;
 &::before{
@@ -295,7 +295,7 @@ position: relative;
   height: 0;
   border-bottom: 8px solid transparent;
   border-top: 8px solid transparent;
-  border-right: 22px solid #5b65d4;
+  border-right: 22px solid #f2f2f2;
   left: -10px;
   top: 0;
 }
@@ -324,6 +324,14 @@ font-size: 16px;
   border: 1px solid #666666;
   border-radius: 2px;
   box-shadow: 0 0 5px rgba(0,0,0,0.3);
+  cursor: pointer;
+  &:hover{
+      background:#1e3833;
+      color: #ffffff;
+  }
+  &:active{
+    transform:scale(0.95);
+  }
 }
 
 
@@ -346,6 +354,12 @@ button[type="submit"] {
   font-size: 1rem;
   margin-left: 10px;
   padding: 12px;
+  font-weight:500;
+  &:disabled{
+    background-color: rgba(0, 8, 14, 0.05);
+    pointer-events: none;
+    color: #595959;
+  }
 }
 
 button[type="submit"]:hover {
@@ -391,8 +405,8 @@ button[type="submit"]:hover {
         }
     }
     .history-item.selected {
-      background-color:#29c03b;
-      color: #000000;
+      background-color: #167252;
+    color: #ffffff;
       font-weight: bold;
     }
     
