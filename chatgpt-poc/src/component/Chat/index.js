@@ -104,7 +104,7 @@ const Chat = ({endsession}) => {
       // });
       
         
-          const response = await fetch('http://13.232.40.36/deid/messages', {    
+          const response = await fetch('http://52.66.94.122/deid/messages', {    
             method: 'POST',
             body: formData
           });
@@ -188,7 +188,7 @@ const Chat = ({endsession}) => {
                     formData.append('input_text', conversationHistoryRef.current);
                     formData.append('task', 'deidentify_summarize_chatgpt');
           
-                    const response = await fetch('http://13.232.40.36/deid/messages', {    
+                    const response = await fetch('http://52.66.94.122/deid/messages', {    
                       method: 'POST',
                       body: formData
                     });
