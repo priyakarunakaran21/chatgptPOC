@@ -335,14 +335,18 @@ font-size: 16px;
 }
 
 
-input[type="text"] {
+input[type="text"], .task-select {
   border: 1px solid #ccc;
   border-radius: 5px;
   box-sizing: border-box;
-  font-size: 1rem;
+  font-size: 14px;
   padding: 12px;
   width: 100%;
   box-shadow: 0 0 5px rgba(0,0,0,0.3);
+}
+.task-select{
+  width: auto;
+  margin-right: 10px;
 }
 
 button[type="submit"] {

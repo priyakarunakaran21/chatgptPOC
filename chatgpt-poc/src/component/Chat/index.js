@@ -20,6 +20,7 @@ const Chat = ({endsession}) => {
   const conversationHistoryRef = useRef('');
   const promptRef = useRef('');
   const [prompt, setPrompt] = useState('');
+  const [task, setTask] = useState('');
   const [chatbotResponse, setChatbotResponse] = useState('');
   const [ChatbotSessionHistory, setChatbotSessionHistory] = useState('');
   const [intro, setIntro] = useState(true);
@@ -45,6 +46,10 @@ const Chat = ({endsession}) => {
   const person = storedData.find((u) => u.name === loggeduser);
   if(person.messages){setChatSessions([...person.messages]);savedHistory1(0);}
   }, [chatSessions.length]);
+
+  const handleTaskChange = (event) => {
+    setTask(event.target.value);
+  };
 
   const toggleSidebar = () => {
     setIsSidebarCollapsed(!isSidebarCollapsed);
@@ -83,7 +88,7 @@ const Chat = ({endsession}) => {
     try {
       const formData = new FormData();
                   formData.append('input_text', newbotHistory1Ref.current);
-                  formData.append('task', 'deidentify_summarize_chatgpt');
+                  formData.append('task', task);
         //can access the variable like this
 //                formData.append('maxToken', settings.maxToken);
 
@@ -110,7 +115,14 @@ const Chat = ({endsession}) => {
           });
     
           const data = await response.json();
-          const generatedText = data.summary_chatgpt.trim();
+          let generatedText;
+                 
+          if(data.chatgpt){
+           generatedText = data.chatgpt.trim();
+          }
+          if(data.classification){
+            generatedText = data.classification.trim();
+          }
 
      if (isCode(generatedText)) {
               // ${chatbotMessage.replace(/\n/g, '<br />').replace(/`([^!]+)`/g, '<pre><code>$1</code></pre>')}
@@ -152,7 +164,10 @@ const Chat = ({endsession}) => {
     
       function handleKeyPress(event) {
         if (event.keyCode === 13) {
-          handleEnter();
+          if(prompt!=="" && task!=="") handleEnter();
+          else if(prompt ==="" && task === "")alert("Please enter proper values!")
+          else if(prompt ==="")alert("Please enter some text!")
+          else alert("please select task!")
         }
       }
     
@@ -186,7 +201,7 @@ const Chat = ({endsession}) => {
           // });
             const formData = new FormData();
                     formData.append('input_text', conversationHistoryRef.current);
-                    formData.append('task', 'deidentify_summarize_chatgpt');
+                    formData.append('task', task);
           
                     const response = await fetch('http://52.66.94.122/deid/messages', {    
                       method: 'POST',
@@ -194,9 +209,14 @@ const Chat = ({endsession}) => {
                     });
                   const data = await response.json();
                   // const data = sampleData;
-                  
-    
-                   const generatedText = data.summary_chatgpt.trim();
+                  let generatedText;
+                 
+                  if(data.chatgpt){
+                   generatedText = data.chatgpt.trim();
+                  }
+                  if(data.classification){
+                    generatedText = data.classification.trim();
+                  }
 
                    if (isCode(generatedText)) {
                      // ${chatbotMessage.replace(/\n/g, '<br />').replace(/`([^!]+)`/g, '<pre><code>$1</code></pre>')}
@@ -204,7 +224,7 @@ const Chat = ({endsession}) => {
                    } else {
                      htmlCode = `<div class="bot-chat"><span class="bot"></span><div class="message-bubble">${generatedText.replace(/\n/g, '<br />')}</div></div>\n\n`;
                    }
-    
+                  
          if (response.ok) {
             const deidMessage = data.deidentified.trim();
            //const chatbotMessage = data.summary_chatgpt.trim();
@@ -255,12 +275,17 @@ const Chat = ({endsession}) => {
               <div className="input-wrapper">
                 {!intro && <button className="regenerate-btn" onClick={regenerateResponses}>Regenerate responses</button>}
                 <div className="message-input">
+                  <select className="task-select" value={task} onChange={handleTaskChange}>
+                      <option value="">Select an option</option>
+                      <option value="deidentify_chatgpt">deidentify_chatgpt</option>
+                      <option value="deidentify_chatgpt_classification">deidentify_chatgpt_classification</option>
+                    </select>
                   <input type="text" id="user-input" className="message-input-field"
                     placeholder="Send message..."
                     value={prompt} onChange={handleChange}
                     onKeyDown={handleKeyPress}
                     ref={promptRef} />
-                  <button type="submit" onClick={handleEnter} disabled={prompt ? false: true}>Send</button>
+                  <button type="submit" onClick={handleEnter} disabled={(prompt && task !=="") ? false: true}>Send</button>
                 </div>
               </div>
             </div>
