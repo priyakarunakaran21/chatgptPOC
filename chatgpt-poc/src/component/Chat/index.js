@@ -89,6 +89,11 @@ const Chat = ({endsession}) => {
       const formData = new FormData();
                   formData.append('input_text', newbotHistory1Ref.current);
                   formData.append('task', task);
+                  formData.append('cgptModel', settings.cgptModel);
+                  formData.append('maxToken', settings.maxToken);
+                  formData.append('numResponses', settings.numResponses);
+                  formData.append('temperature', settings.temperature);
+                  formData.append('regenTemperature', settings.regenTemperature);
         //can access the variable like this
 //                formData.append('maxToken', settings.maxToken);
 
@@ -202,6 +207,11 @@ const Chat = ({endsession}) => {
             const formData = new FormData();
                     formData.append('input_text', conversationHistoryRef.current);
                     formData.append('task', task);
+                    formData.append('cgptModel', settings.cgptModel);
+                    formData.append('maxToken', settings.maxToken);
+                    formData.append('numResponses', settings.numResponses);
+                    formData.append('temperature', settings.temperature);
+                    formData.append('regenTemperature', settings.regenTemperature);
           
                     const response = await fetch('http://13.127.96.31/deid/messages', {    
                       method: 'POST',
