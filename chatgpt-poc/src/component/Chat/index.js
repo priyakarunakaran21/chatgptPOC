@@ -98,6 +98,7 @@ const Chat = ({endsession}) => {
           // formData.append('maxToken', settings.api_key);
           // formData.append('maxToken', settings.cgpt_endpoint);
 
+
       // const response = await fetch('https://api.openai.com/v1/engines/text-davinci-003/completions', {
       //   method: 'POST',
       //   headers: {
@@ -205,6 +206,11 @@ const Chat = ({endsession}) => {
             const formData = new FormData();
                     formData.append('input_text', conversationHistoryRef.current);
                     formData.append('task', task);
+                    formData.append('cgptModel', settings.cgptModel);
+                    formData.append('maxToken', settings.maxToken);
+                    formData.append('numResponses', settings.numResponses);
+                    formData.append('temperature', settings.temperature);
+                    formData.append('regenTemperature', settings.regenTemperature);
           
                     const response = await fetch('http://35.154.203.46/deid/messages', {    
                       method: 'POST',
