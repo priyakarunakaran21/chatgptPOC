@@ -1,43 +1,60 @@
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import Login from './component/login'
 import Chat from './component/Chat/index.js'
 
 function App() {
   const myObject = [
-    {name: 'test@test.com'},
-    {name: 'John@cvs.com'},
-    {name: 'Bill@cvs.com'}
+    {name: 'test@test.com', password: 'test@123'},
+    {name: 'John@cvs.com', password: 'test@123'},
+    {name: 'Bill@cvs.com', password: 'test@123'}
   ];
-const [user, setUser] = useState('')
 const [isExist, setIsExist] = useState(false);
 const [error, setError] = useState('');
+const [cred, setCred] = useState({
+  user: '',
+  password: ''
+});
+
+useEffect(() => {
+  const storedUser = sessionStorage.getItem('loggeduser');
+
+    // If a stored value exists, set the count state to the stored value
+    if (storedUser) {
+      setIsExist(true);
+    } 
+}, []);
+
 
 if (!localStorage.getItem('myObject')) {
 localStorage.setItem('myObject', JSON.stringify(myObject));
 }
 
-const handleInputChange = (event) => {
-    setUser(event.target.value);
-  };
+const handleCredChange = (name,value) => {
+  setCred({
+    ...cred,
+    [name]: value
+  });
+};
 
 function handleKeyPress(event) {
-    setUser(event.target.value);
-    if (event.keyCode === 13) {
+    if (event.keyCode === 13 && cred.user!=='' && cred.password !=='') {
         onSubmit();
     }
   }
 
 const onSubmit = () =>{
     const parsedArray = JSON.parse(localStorage.getItem('myObject'));
-    const person = parsedArray.find((u) => u.name === user);
+    const person = parsedArray.find((u) => u.name === cred.user && u.password === cred.password);
   if (person) {
     setIsExist(true);
-    sessionStorage.setItem('loggeduser', user);
+    sessionStorage.setItem('loggeduser', cred.user);
   } else {
     setIsExist(false);
   }
-    
-    setUser('');
+  setCred({
+    ...cred,
+    user: ''
+  });
     setError("User is unauthorized");
 }
 
@@ -50,7 +67,7 @@ const onLogout = () =>{
     {isExist ? (
      <Chat endsession={onLogout}/>
     ) : (
-      <Login isExist={isExist} handleInputChange={handleInputChange} handleKeyPress={handleKeyPress} onSubmit={onSubmit} error={error}/>
+      <Login isExist={isExist} onCredChange={handleCredChange} handleKeyPress={handleKeyPress} onSubmit={onSubmit} error={error}/>
     )}
   </div>
 );
