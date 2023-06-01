@@ -206,11 +206,12 @@ const Chat = ({endsession}) => {
             const formData = new FormData();
                     formData.append('input_text', conversationHistoryRef.current);
                     formData.append('task', task);
-                    formData.append('cgptModel', settings.cgptModel);
-                    formData.append('maxToken', settings.maxToken);
-                    formData.append('numResponses', settings.numResponses);
-                    formData.append('temperature', settings.temperature);
-                    formData.append('regenTemperature', settings.regenTemperature);
+                    // formData.append('maxToken', settings.max_Token);
+          // formData.append('maxToken', settings.num_Responses);
+          // formData.append('maxToken', settings.temperature);
+          // formData.append('maxToken', settings.regen_Temperature);
+          // formData.append('maxToken', settings.api_key);
+          // formData.append('maxToken', settings.cgpt_endpoint);
           
                     const response = await fetch('http://35.154.203.46/deid/messages', {    
                       method: 'POST',
