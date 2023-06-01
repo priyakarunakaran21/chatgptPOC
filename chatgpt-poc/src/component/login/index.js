@@ -1,8 +1,11 @@
 
 import './style.scss';
 
-const Login = ({isExist, handleInputChange, handleKeyPress, onSubmit, error}) =>{
-   
+const Login = ({isExist, onCredChange, handleKeyPress, onSubmit, error}) =>{
+    const handleDataChange = (event) =>{
+        const { name, value } = event.target;
+        onCredChange(name, value);
+      }
    
     return(
        
@@ -11,7 +14,8 @@ const Login = ({isExist, handleInputChange, handleKeyPress, onSubmit, error}) =>
         {!isExist && <span className="error">{error}</span>}
         <h1>Enter your user name</h1>
         <div className="input-container">
-        <input type="text" onChange={handleInputChange} onKeyDown={handleKeyPress}/>
+        <input type="text" name="user" onChange={handleDataChange} onKeyDown={handleKeyPress} placeholder="Username"/>
+        <input type="password" name="password" placeholder="Password" onChange={handleDataChange} onKeyDown={handleKeyPress}/>
         <button type="submit" onClick={onSubmit}>Submit</button>
         </div>
         </div>

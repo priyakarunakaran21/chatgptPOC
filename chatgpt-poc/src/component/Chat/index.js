@@ -27,10 +27,12 @@ const Chat = ({endsession}) => {
 
   const [settings, setSettings] = useState({
     cgptModel: '',
-    maxToken: '',
-    numResponses: '',
+    max_Token: '',
+    num_Responses: '',
     temperature: '',
-    regenTemperature: ''
+    regen_Temperature: '',
+    api_key: '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',
+    cgpt_endpoint: 'https://api.openai.com/v1/engines/text-davinci-003/completions'
   });
  
   const handleSettingsChange = (name,value) => {
@@ -87,12 +89,14 @@ const Chat = ({endsession}) => {
   const regenerateResponses = async () => {
     try {
       const formData = new FormData();
-                  formData.append('input_text', newbotHistory1Ref.current);
-                  formData.append('task', task);
-        //can access the variable like this
-//                formData.append('maxToken', settings.maxToken);
-
-
+          formData.append('input_text', newbotHistory1Ref.current);
+          formData.append('task', task);
+          // formData.append('maxToken', settings.max_Token);
+          // formData.append('maxToken', settings.num_Responses);
+          // formData.append('maxToken', settings.temperature);
+          // formData.append('maxToken', settings.regen_Temperature);
+          // formData.append('maxToken', settings.api_key);
+          // formData.append('maxToken', settings.cgpt_endpoint);
 
 
       // const response = await fetch('https://api.openai.com/v1/engines/text-davinci-003/completions', {
@@ -109,7 +113,7 @@ const Chat = ({endsession}) => {
       // });
       
         
-          const response = await fetch('http://13.127.96.31/deid/messages', {    
+          const response = await fetch('http://35.154.203.46/deid/messages', {    
             method: 'POST',
             body: formData
           });
@@ -202,8 +206,13 @@ const Chat = ({endsession}) => {
             const formData = new FormData();
                     formData.append('input_text', conversationHistoryRef.current);
                     formData.append('task', task);
+                    formData.append('cgptModel', settings.cgptModel);
+                    formData.append('maxToken', settings.maxToken);
+                    formData.append('numResponses', settings.numResponses);
+                    formData.append('temperature', settings.temperature);
+                    formData.append('regenTemperature', settings.regenTemperature);
           
-                    const response = await fetch('http://13.127.96.31/deid/messages', {    
+                    const response = await fetch('http://35.154.203.46/deid/messages', {    
                       method: 'POST',
                       body: formData
                     });
