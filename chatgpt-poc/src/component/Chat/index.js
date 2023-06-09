@@ -15,6 +15,7 @@ const Chat = ({endsession}) => {
   const [chatSessions, setChatSessions] = useState([]);
   const myRef = useRef(null);
   const newbotHistory1Ref = useRef('');
+  const deidconvoHistoryRef = useRef('');
   const [sessionInit, setsessionInit] = useState(0);
   let htmlCode;
   const conversationHistoryRef = useRef('');
@@ -26,12 +27,12 @@ const Chat = ({endsession}) => {
   const [intro, setIntro] = useState(true);
 
   const [settings, setSettings] = useState({
-    cgptModel: '',
-    max_Token: '',
-    num_Responses: '',
-    temperature: '',
-    regen_Temperature: '',
-    api_key: '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',
+    cgptModel: 'https://api.openai.com/v1/engines/text-davinci-003/completions',
+    max_Token: '500',
+    num_Responses: '1',
+    temperature: '0.2',
+    regen_Temperature: '0.2',
+    api_key: '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',
     cgpt_endpoint: 'https://api.openai.com/v1/engines/text-davinci-003/completions'
   });
  
@@ -43,7 +44,7 @@ const Chat = ({endsession}) => {
   };
   
   useEffect(() => {
-    const storedData = JSON.parse(localStorage.getItem('myObject'));
+  const storedData = JSON.parse(localStorage.getItem('myObject'));
   const loggeduser = sessionStorage.getItem("loggeduser");
   const person = storedData.find((u) => u.name === loggeduser);
   if(person.messages){setChatSessions([...person.messages]);savedHistory1(0);}
@@ -59,11 +60,13 @@ const Chat = ({endsession}) => {
   const startNewSession = () => {
     if(chatbotResponse !== ""){
     conversationHistoryRef.current = '';
+    //deidconvoHistoryRef.current = '';
     setChatbotResponse('');
     setIntro(true);
     setChatSessions((prevSessions) => [...prevSessions, chatbotResponse]);
   }else if(chatbotResponse === "" && ChatbotSessionHistory !== ""){
     conversationHistoryRef.current = '';
+    deidconvoHistoryRef.current = '';
     setChatbotResponse('');
     setIntro(true);
   }
@@ -85,20 +88,19 @@ const Chat = ({endsession}) => {
     setChatbotSessionHistory(chatSessions[index]);
   };
 
-  
   const regenerateResponses = async () => {
     try {
       const formData = new FormData();
-          formData.append('input_text', newbotHistory1Ref.current);
-          formData.append('task', task);
-          // formData.append('maxToken', settings.max_Token);
-          // formData.append('maxToken', settings.num_Responses);
-          // formData.append('maxToken', settings.temperature);
-          // formData.append('maxToken', settings.regen_Temperature);
-          // formData.append('maxToken', settings.api_key);
-          // formData.append('maxToken', settings.cgpt_endpoint);
-
-
+                formData.append('input_text', conversationHistoryRef.current);
+                formData.append('task', task);
+                formData.append('history_conversations', deidconvoHistoryRef.current);
+                formData.append('max_Token', settings.max_Token);
+                formData.append('num_Responses', settings.num_Responses);
+       formData.append('temperature', settings.temperature);
+       formData.append('regen_Temperature', settings.regen_Temperature);
+       formData.append('api_key', settings.api_key);
+       formData.append('cgpt_endpoint', settings.cgpt_endpoint);
+       
       // const response = await fetch('https://api.openai.com/v1/engines/text-davinci-003/completions', {
       //   method: 'POST',
       //   headers: {
@@ -113,7 +115,7 @@ const Chat = ({endsession}) => {
       // });
       
         
-          const response = await fetch('http://35.154.203.46/deid/messages', {    
+          const response = await fetch('http://52.66.161.215/deid/messages', {    
             method: 'POST',
             body: formData
           });
@@ -142,7 +144,10 @@ const Chat = ({endsession}) => {
             // conversationHistoryRef.current = newbotHistory;
            // const newbotSession =  `${htmlCode}\n\n`;
            const newbotSession = `<div class="de-bot-chat"><span class="de-bot"></span><div class="de-message-bubble">${deidMessage.replace(/\n/g, '<br />')}</div></div>\n\n ${htmlCode}\n\n`;
-            setChatbotResponse((prevText) => prevText.concat(newbotSession));
+           //deidconvoHistoryRef.current =`${deidconvoHistoryRef.current} ${newbotSession}\n\n`;
+           deidconvoHistoryRef.current =`${deidconvoHistoryRef.current}\n ${deidMessage}\n ${generatedText}\n`;
+           //console.log(deidconvoHistoryRef.current)
+           setChatbotResponse((prevText) => prevText.concat(newbotSession));
             //console.log(chatbotResponse);
             //console.log(newbotSession);
           } else {
@@ -159,8 +164,6 @@ const Chat = ({endsession}) => {
           myRef.current.scrollIntoView(false);
         }, 10);
       };
-    
-     
     
       function handleChange(event) {
         setPrompt(promptRef.current.value);
@@ -181,10 +184,12 @@ const Chat = ({endsession}) => {
     
       const handleEnter = async () => {
         setIntro(false);
-        const newHistory = `You: ${prompt}\n`;
-        conversationHistoryRef.current = newHistory;
-        newbotHistory1Ref.current = newHistory;
-    
+       
+              const newHistory = `You: ${prompt}\n`;
+              conversationHistoryRef.current = newHistory;
+              newbotHistory1Ref.current = newHistory;
+            
+        //console.log(deidconvoHistoryRef.current)   
         const convoSession = `<div class="person-chat"><span class="user"></span><label class="user-message-bubble">${prompt}\n</label></div>`;
         //const newChatSession = `${chatbotResponse}${convoSession}`;
         setChatbotResponse((prevText) => prevText.concat(convoSession));
@@ -206,14 +211,15 @@ const Chat = ({endsession}) => {
             const formData = new FormData();
                     formData.append('input_text', conversationHistoryRef.current);
                     formData.append('task', task);
-                    // formData.append('maxToken', settings.max_Token);
-          // formData.append('maxToken', settings.num_Responses);
-          // formData.append('maxToken', settings.temperature);
-          // formData.append('maxToken', settings.regen_Temperature);
-          // formData.append('maxToken', settings.api_key);
-          // formData.append('maxToken', settings.cgpt_endpoint);
+                    formData.append('history_conversations', deidconvoHistoryRef.current);
+                    formData.append('max_Token', settings.max_Token);
+                    formData.append('num_Responses', settings.num_Responses);
+           formData.append('temperature', settings.temperature);
+           formData.append('regen_Temperature', settings.regen_Temperature);
+           formData.append('api_key', settings.api_key);
+           formData.append('cgpt_endpoint', settings.cgpt_endpoint);
           
-                    const response = await fetch('http://35.154.203.46/deid/messages', {    
+                    const response = await fetch('http://52.66.161.215/deid/messages', {    
                       method: 'POST',
                       body: formData
                     });
@@ -237,10 +243,18 @@ const Chat = ({endsession}) => {
                   
          if (response.ok) {
             const deidMessage = data.deidentified.trim();
+              //const newbotHistory = `${conversationHistoryRef.current} ${generatedText}\n\n`;
+              //conversationHistoryRef.current = newbotHistory;
+              //counter++;
+            
+            
            //const chatbotMessage = data.summary_chatgpt.trim();
            // const newbotHistory = `${chatbotMessage}\n\n`;
           //  conversationHistoryRef.current = newbotHistory;
             const newbotSession = `<div class="de-bot-chat"><span class="de-bot"></span><div class="de-message-bubble">${deidMessage.replace(/\n/g, '<br />')}</div></div>\n\n ${htmlCode}\n\n`;
+            //deidconvoHistoryRef.current =`${deidconvoHistoryRef.current} ${newbotSession}\n\n`;
+            deidconvoHistoryRef.current =`${deidconvoHistoryRef.current}\n ${deidMessage}\n ${generatedText}\n`;
+            //console.log(deidconvoHistoryRef.current)
             //const newbotSession = `${htmlCode}\n\n`;
             setChatbotResponse((prevText) => prevText.concat(newbotSession));
             if(sessionInit < 1 ){
