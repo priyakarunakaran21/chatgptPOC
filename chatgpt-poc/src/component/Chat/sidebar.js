@@ -8,7 +8,7 @@ import rightarrow from '../../assets/right.png'
 import downarrow from '../../assets/down.png'
 import newchat from '../../assets/newchat.png'
 import logo from '../../assets/logo.png'
-const Sidebar = ({ isShow, startNewSession, savedHistory1, chatSessions, endsession, settings, onDataUpdate }) => {
+const Sidebar = ({ isShow, startNewSession, savedHistory1, chatSessions, endsession, onDataUpdate }) => {
   const [selectedButtonIndex, setSelectedButtonIndex] = useState(0);
     const [isopenChat , setOpenChat] = useState(true);
     const [showModal, setShowModal] = useState(false);
@@ -94,7 +94,7 @@ const Sidebar = ({ isShow, startNewSession, savedHistory1, chatSessions, endsess
         {showConfiguration && (
 
         <div className="configuration">
-            <p><input className="full" name="cgptModel" type="text" placeholder="OpenAi Model name"  onChange={handleDataChange} /></p>
+            <p><input className="full" name="api_key" type="text" placeholder="api key"  onChange={handleDataChange} /></p>
             <p><input name="maxToken" type="number" placeholder="Max Token" min="1"  onChange={handleDataChange} />
             <input name="numResponses" type="number" placeholder="No.of.Response" title="No.of.Response"  onChange={handleDataChange} /></p>
             <p><input name="temperature" type="number" placeholder="temperature" onChange={handleDataChange} />

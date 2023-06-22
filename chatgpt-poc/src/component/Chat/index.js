@@ -27,12 +27,11 @@ const Chat = ({endsession}) => {
   const [intro, setIntro] = useState(true);
 
   const [settings, setSettings] = useState({
-    cgptModel: 'https://api.openai.com/v1/engines/text-davinci-003/completions',
     max_Token: '500',
     num_Responses: '1',
     temperature: '0.2',
     regen_Temperature: '0.2',
-    api_key: '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',
+    api_key: '',
     cgpt_endpoint: 'https://api.openai.com/v1/engines/text-davinci-003/completions'
   });
  
@@ -89,6 +88,11 @@ const Chat = ({endsession}) => {
   };
 
   const regenerateResponses = async () => {
+    if(settings.api_key === ""){
+      alert("Please enter api-key under settings in sidebar");
+      return
+    }
+    else{
     try {
       const formData = new FormData();
                 formData.append('input_text', conversationHistoryRef.current);
@@ -115,7 +119,7 @@ const Chat = ({endsession}) => {
       // });
       
         
-          const response = await fetch('http://52.66.161.215/deid/messages', {    
+          const response = await fetch('http://13.200.88.137/deid/messages', {    
             method: 'POST',
             body: formData
           });
@@ -158,6 +162,7 @@ const Chat = ({endsession}) => {
         }
     
         scrollToBottom();
+      }
       };
       const scrollToBottom = () => {
         setTimeout(function () {
@@ -183,6 +188,11 @@ const Chat = ({endsession}) => {
       }
     
       const handleEnter = async () => {
+        if(settings.api_key === ""){
+          alert("Please enter api-key under settings in sidebar");
+          return
+        }
+        else{
         setIntro(false);
        
               const newHistory = `You: ${prompt}\n`;
@@ -193,7 +203,7 @@ const Chat = ({endsession}) => {
         const convoSession = `<div class="person-chat"><span class="user"></span><label class="user-message-bubble">${prompt}\n</label></div>`;
         //const newChatSession = `${chatbotResponse}${convoSession}`;
         setChatbotResponse((prevText) => prevText.concat(convoSession));
-    
+        
         try {
           // const response = await fetch('https://api.openai.com/v1/engines/text-davinci-003/completions', {
           //   method: 'POST',
@@ -219,7 +229,7 @@ const Chat = ({endsession}) => {
            formData.append('api_key', settings.api_key);
            formData.append('cgpt_endpoint', settings.cgpt_endpoint);
           
-                    const response = await fetch('http://52.66.161.215/deid/messages', {    
+                    const response = await fetch('http://13.200.88.137/deid/messages', {    
                       method: 'POST',
                       body: formData
                     });
@@ -270,6 +280,7 @@ const Chat = ({endsession}) => {
         setsessionInit(sessionInit+1)
         scrollToBottom();
         setPrompt("");
+      }
       };
     
       return (
