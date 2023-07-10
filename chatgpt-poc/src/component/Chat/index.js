@@ -11,7 +11,7 @@ import Sidebar from './sidebar';
 // }
 
 const Chat = ({endsession}) => {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const isSidebarCollapsed = false;
   const [chatSessions, setChatSessions] = useState([]);
   const myRef = useRef(null);
   const newbotHistory1Ref = useRef('');
@@ -43,19 +43,19 @@ const Chat = ({endsession}) => {
   };
   
   useEffect(() => {
-  const storedData = JSON.parse(localStorage.getItem('myObject'));
-  const loggeduser = sessionStorage.getItem("loggeduser");
-  const person = storedData.find((u) => u.name === loggeduser);
-  if(person.messages){setChatSessions([...person.messages]);savedHistory1(0);}
-  }, [chatSessions.length]);
+  // const storedData = JSON.parse(localStorage.getItem('myObject'));
+  // const loggeduser = sessionStorage.getItem("loggeduser");
+  // const person = storedData.find((u) => u.name === loggeduser);
+  // if(person.messages){setChatSessions([...person.messages]);savedHistory1(0);}
+  },[]);
 
   const handleTaskChange = (event) => {
     setTask(event.target.value);
   };
 
-  const toggleSidebar = () => {
-    setIsSidebarCollapsed(!isSidebarCollapsed);
-  };
+  // const toggleSidebar = () => {
+  //   setIsSidebarCollapsed(!isSidebarCollapsed);
+  // };
   const startNewSession = () => {
     if(chatbotResponse !== ""){
     conversationHistoryRef.current = '';

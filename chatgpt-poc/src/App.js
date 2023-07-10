@@ -1,76 +1,165 @@
 import {useState, useEffect} from 'react'
+
 import Login from './component/login'
+
 import Chat from './component/Chat/index.js'
 
+import {BrowserRouter as Router, Route, Routes} from 'react-router-dom'
+
+ 
+
 function App() {
-  const myObject = [
-    {name: 'test@test.com', password: 'test@123'},
-    {name: 'John@cvs.com', password: 'test@123'},
-    {name: 'Bill@cvs.com', password: 'test@123'}
-  ];
+
 const [isExist, setIsExist] = useState(false);
+
 const [error, setError] = useState('');
+
 const [cred, setCred] = useState({
-  user: '',
-  password: ''
+
+  user: ''
+
 });
 
+const [userData, setUserdata] = useState([])
+
+let newData;
+
+ 
+
+const fetchData = async (user) => { debugger
+
+  try{
+
+    const response = await fetch(`https://edp-dev-dgt-he.ehip.dev.cvshealth.com/operations/bot/getMessages?email=${user}`);
+
+    if(!response.ok){
+
+      throw new Error("Error:", response.status);
+
+    }
+
+    const data = await response.json();
+
+    newData = data;
+
+  }catch(error){
+
+    console.error(error);
+
+  }
+
+ 
+
+  return newData
+
+}
+
+ 
+
 useEffect(() => {
+
   const storedUser = sessionStorage.getItem('loggeduser');
 
-    // If a stored value exists, set the count state to the stored value
+ 
+
     if (storedUser) {
+
+      (async () => {
+
+        setUserdata(await fetchData(storedUser));
+
+      })();
+
       setIsExist(true);
-    } 
+
+    }
+
 }, []);
 
-
-if (!localStorage.getItem('myObject')) {
-localStorage.setItem('myObject', JSON.stringify(myObject));
-}
-
 const handleCredChange = (name,value) => {
+
   setCred({
+
     ...cred,
+
     [name]: value
+
   });
+
 };
 
+ 
+
 function handleKeyPress(event) {
-    if (event.keyCode === 13 && cred.user!=='' && cred.password !=='') {
+
+    if (event.keyCode === 13 && cred.user!=='') {
+
         onSubmit();
+
     }
+
   }
 
-const onSubmit = () =>{
-    const parsedArray = JSON.parse(localStorage.getItem('myObject'));
-    const person = parsedArray.find((u) => u.name === cred.user && u.password === cred.password);
-  if (person) {
+ 
+
+const onSubmit = async() =>{
+
+  debugger
+
+  const parsedArray = await fetchData(cred.user);
+
+  setUserdata(parsedArray);
+
+  if (parsedArray !== undefined && parsedArray.email === cred.user) {
+
     setIsExist(true);
+
     sessionStorage.setItem('loggeduser', cred.user);
+
   } else {
+
+    setError("Invalid email Id");
+
     setIsExist(false);
+
+    setCred({
+
+      ...cred,
+
+      user: ''
+
+    });
+
   }
-  setCred({
-    ...cred,
-    user: ''
-  });
-    setError("User is unauthorized");
+
 }
+
+ 
 
 const onLogout = () =>{
+
   setIsExist(false);
+
   setError('');
+
 }
+
   return (
-    <div>
-    {isExist ? (
-     <Chat endsession={onLogout}/>
+
+    isExist ? (
+
+      <Chat endsession={onLogout} chats={userData.conversations} email={cred.user}/>
+
     ) : (
+
       <Login isExist={isExist} onCredChange={handleCredChange} handleKeyPress={handleKeyPress} onSubmit={onSubmit} error={error}/>
-    )}
-  </div>
+
+    )
+
 );
+
 }
+
+ 
 
 export default App;
